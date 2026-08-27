@@ -19,10 +19,10 @@
             transform: translateX(-50%);
         }
 
-        #num-2 .flame { top: 75px; left: 87%; }
-        #num-0-1 .flame { top: 75px; left: 53%; }
-        #num-0-2 .flame { top: 75px; left: 53%; }
-        #num-3 .flame { top: 75px; left: 67%; }
+        #num-2 .flame { top: 71px; left: 87%; }
+        #num-0-1 .flame { top: 71px; left: 53%; }
+        #num-0-2 .flame { top: 71px; left: 53%; }
+        #num-3 .flame { top: 71px; left: 67%; }
 
         body {
             background-color: #ffb6c1; 
@@ -202,10 +202,10 @@
         <button id="start-btn">BẤT NGỜ CHƯA!!!!!!!!</button>
     </div>
 
-    <div id="instruction">LẮC ĐIỆN THOẠI ĐÊ<br><small>(bất ngờ hè)</small></div>
+    <div id="instruction">LẮC ĐIỆN THOẠI ĐÊ<br><small>(bất ngờ hè, nhớ mở loa)</small></div>
 
     <!-- Nút "Ấn tiếp đi" được đưa lên phía trên, nằm ngay sát dưới khu vực chữ -->
-    <button id="next-btn">Ấn tiếp đi 👉</button>
+    <button id="next-btn">Ấn tiếp đi nào</button>
 
     <div class="candles-container" id="candles">
         <div class="candle-wrapper" id="num-2">
@@ -260,10 +260,10 @@
                     if (permissionState === 'granted') {
                         window.addEventListener('devicemotion', handleShake);
                     } else {
-                        alert('Bạn cần cấp quyền cảm biến để trải nghiệm hiệu ứng lắc nhé!');
+                        alert('Lỗi rồi?');
                     }
                 } catch (error) {
-                    console.error("Lỗi xin quyền cảm biến:", error);
+                    console.error("Lỗi quyền gì đó:", error);
                 }
             } else {
                 window.addEventListener('devicemotion', handleShake);
