@@ -19,7 +19,7 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            font-family: 'TAHOMA', cursive, sans-serif;
+            font-family: Tahoma, Arial, sans-serif;
             overflow: hidden;
             text-align: center;
         }
@@ -179,6 +179,16 @@
             padding: 20px;
             text-transform: uppercase;
         }
+/* Tự động thu nhỏ ảnh khi mở trên màn hình điện thoại nhỏ */
+        @media screen and (max-width: 600px) {
+            .candle-img {
+                width: 65px !important;   /* Thu nhỏ chiều rộng ảnh xuống cho vừa vặn */
+                height: 120px !important; /* Thu nhỏ chiều cao ảnh tương ứng */
+            }
+            .candle-wrapper {
+                margin: 0 4px !important; /* Thu hẹp khoảng cách lề giữa các số */
+            }
+        }
     </style>
 </head>
 <body>
@@ -219,7 +229,6 @@
     <!-- Nút xuất hiện khi hết nhạc -->
     <button id="next-btn">Ấn tiếp đi 👉</button>
 
-    <audio id="birthday-song" src="song.m4a" preload="auto"></audio>
 
     <!-- THẺ CANVAS PHÁO HOA ĐÃ ĐƯỢC ĐẶT ĐÚNG VỊ TRÍ Ở ĐÂY -->
     <canvas id="fireworks"></canvas>
@@ -348,9 +357,17 @@
                         candlesContainer.classList.add('magic-done'); 
                         
                         setTimeout(() => {
-                            song.play(); // ĐÚNG LÚC NÀY NHẠC MỚI BẮT ĐẦU CHẠY THẬT SỰ
+                            // TẠO VÀ PHÁT NHẠC NGAY TẠI ĐÂY (Đảm bảo không bao giờ bị lọt âm thanh lúc đầu)
+                            const song = new Audio('nhac.m4a'); 
+                            song.play();
                             startFireworks(); 
+
+                            // Lắng nghe sự kiện kết thúc bài hát để hiện nút "Ấn tiếp đi"
+                            song.addEventListener('ended', () => {
+                                nextBtn.style.display = 'block'; 
+                            });
                         }, 500);
+                    }
                     }
                 } else {
                     zero.style.transform = `translate(0px, 0px)`;
