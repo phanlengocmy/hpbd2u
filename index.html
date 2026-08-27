@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chúc mừng Sinh nhật!</title>
     <style>
-        /* --- TÙY CHỈNH VỊ TRÍ RIÊNG BIỆT CHO TỪNG NGỌN LỬA --- */
+        /* --- ĐỊNH VỊ CHUẨN XÁC CHO TỪNG NGỌN LỬA --- */
         .flame {
             width: 18px;
             height: 32px;
@@ -14,17 +14,16 @@
             animation: flicker 0.1s infinite alternate;
             transition: opacity 0.5s;
             position: absolute;
-            top: 10px; /* Khoảng cách từ đỉnh wrapper xuống ngọn lửa */
             z-index: 5;
             pointer-events: none;
             transform: translateX(-50%);
         }
 
-        /* Bạn có thể tự chỉnh thông số left (%) ở đây nếu thấy ngọn lửa nào bị lệch */
-        #num-2 .flame { left: 85%; }
-        #num-0-1 .flame { left: 54%; }
-        #num-0-2 .flame { left: 54%; }
-        #num-3 .flame { left: 67%; }
+        /* Bạn có thể tinh chỉnh lại left (%) hoặc top (px) của từng số nếu muốn ngọn lửa dịch chuyển */
+        #num-2 .flame { top: 15px; left: 85%; }
+        #num-0-1 .flame { top: 15px; left: 53%; }
+        #num-0-2 .flame { top: 15px; left: 53%; }
+        #num-3 .flame { top: 15px; left: 67%; }
 
         body {
             background-color: #ffb6c1; 
@@ -181,7 +180,6 @@
             text-transform: uppercase;
         }
 
-        /* Tự động thu nhỏ cân đối khi mở trên màn hình điện thoại nhỏ */
         @media screen and (max-width: 600px) {
             .candle-img {
                 width: 60px !important;   
@@ -232,11 +230,15 @@
 
     <canvas id="fireworks"></canvas>
 
+    <!-- Khai báo thẻ audio trực tiếp trong HTML để trình duyệt di động dễ nhận diện -->
+    <audio id="real-song" src="song.m4a" preload="auto"></audio>
+
     <script>
         const startBtn = document.getElementById('start-btn');
         const startScreen = document.getElementById('start-screen');
         const instruction = document.getElementById('instruction');
         const candlesContainer = document.getElementById('candles');
+        const song = document.getElementById('real-song');
         
         const nextBtn = document.getElementById('next-btn');
         const finalScreen = document.getElementById('final-screen');
@@ -244,15 +246,12 @@
         let hasStarted = false;
         let draggedZerosCount = 0; 
 
-        // Khởi tạo đối tượng nhạc sẵn sàng từ tương tác bấm nút đầu tiên (Tránh bị điện thoại chặn)
-        const song = new Audio('song.m4a');
-
         startBtn.addEventListener('click', async () => {
-            // Mở khóa âm thanh trực tiếp trên thiết bị di động
+            // Mở khóa âm thanh bằng cách chạy rồi dừng ngay lập tức khi người dùng click
             song.play().then(() => {
                 song.pause();
                 song.currentTime = 0;
-            }).catch(e => console.log("Mở khóa âm thanh:", e));
+            }).catch(e => console.log("Lỗi mở khóa âm thanh:", e));
 
             startScreen.style.display = 'none';
             candlesContainer.style.opacity = '1';
@@ -351,8 +350,8 @@
                         candlesContainer.classList.add('magic-done'); 
                         
                         setTimeout(() => {
-                            // Phát bài hát song.m4a đã được mở khóa từ trước
-                            song.play();
+                            // Phát nhạc từ thẻ audio cố định
+                            song.play().catch(e => console.log("Lỗi phát nhạc:", e));
                             startFireworks(); 
 
                             song.addEventListener('ended', () => {
@@ -426,4 +425,4 @@
         }
     </script>
 </body>
-</html>
+</html
