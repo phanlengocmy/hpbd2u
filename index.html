@@ -241,25 +241,14 @@
         let hasStarted = false;
         let draggedZerosCount = 0; 
 
-        startBtn.addEventListener('pointerdown', async () => {
-            try {
-                // 1. Mở khóa âm thanh an toàn qua đối tượng Audio ẩn
-                const tempSong = new Audio('song.m4a');
-                tempSong.muted = true;
-                tempSong.play().then(() => {
-                    tempSong.pause();
-                    tempSong.currentTime = 0;
-                }).catch(e => console.log("Lỗi âm thanh mồi:", e));
-            } catch (err) {
-                console.log("Không thể tạo audio:", err);
-            }
-            
-            // 2. Ẩn màn hình chờ và hiện nội dung ngay lập tức
+        // Sử dụng sự kiện click thông thường để đảm bảo tương thích 100% trên mọi thiết bị
+        startBtn.addEventListener('click', async () => {
+            // 1. Chuyển đổi giao diện ngay lập tức không chần chừ
             startScreen.style.display = 'none';
             candlesContainer.style.opacity = '1';
             instruction.style.display = 'block';
 
-            // 3. Xin quyền cảm biến lắc cho điện thoại
+            // 2. Xin quyền cảm biến lắc cho điện thoại
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                 try {
                     const permissionState = await DeviceMotionEvent.requestPermission();
