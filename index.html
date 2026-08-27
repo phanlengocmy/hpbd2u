@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc mừng Sinh nhật!</title>
+    <style>
+        /* Tinh chỉnh ngọn lửa của bạn */
+        #num-2 .flame { top: 120px; left: 85%; }
+        #num-0-1 .flame { top: 120px; left: 53%; }
+        #num-0-2 .flame { top: 120px; left: 53%; }
+        #num-3 .flame { top: 120px; left: 67%; }
+
+        body {
+            background-color: #ffb6c1; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'TAHOMA', cursive, sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #start-screen {
+            position: absolute;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        #instruction {
+            display: none;
+            position: absolute; 
+            top: 20%;           
+            width: 90%;
+            font-size: 1.5rem;
+            color: #d81b60;
+            animation: pulse 1.5s infinite;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .candles-container {
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .candle-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 8px; 
+            padding-top: 50px; 
+            transition: all 1.2s ease-in-out; 
+            height: 250px; 
+        }
+
+        .candle-img {
+            width: 90px;  
+            height: 160px; 
+            object-fit: contain; 
+            transition: all 1.2s ease-in-out;
+            margin-top: auto;
+            pointer-events: none;
+        }
+
+        .flame {
+            width: 20px;
+            height: 35px;
+            background: radial-gradient(ellipse at bottom, #ff9900 10%, #ffff00 40%, transparent 80%);
+            border-radius: 50% 50% 20% 20%;
+            animation: flicker 0.1s infinite alternate;
+            transition: opacity 0.5s;
+            position: absolute;
+            transform: translateX(-50%);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1) translateX(-50%) rotate(-2deg); opacity: 0.9; }
+            100% { transform: scale(1.1) translateX(-50%) rotate(2deg); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .extinguished .flame {
+            opacity: 0 !important;
+            animation: none !important;
+        }
+
+        .zero {
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .zero:active {
+            cursor: grabbing;
+        }
+
+        .zero.fade-out {
+            opacity: 0 !important;
+            pointer-events: none; 
+        }
+
+        .zero.collapse-space {
+            margin: 0 !important; 
+            padding: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        .zero.collapse-space .candle-img, .zero.fade-out .candle-img {
+            width: 0 !important; 
+            height: 0 !important;
+        }
+
+        #fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+            z-index: 100; 
+        }
+
+        /* --- CSS CHO NÚT "ẤN TIẾP ĐI" VÀ MÀN HÌNH KẾT THÚC --- */
+        #next-btn {
+            display: none; /* Ẩn cho đến khi hết nhạc */
+            position: absolute;
+            bottom: 15%;
+            z-index: 200;
+            background-color: #ff1493;
+            animation: pulse 1s infinite;
+        }
+
+        #final-screen {
+            display: none; /* Ẩn màn hình cuối */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffb6c1; /* Nền hồng che toàn bộ */
+            z-index: 9999; /* Đè lên tất cả mọi thứ */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #final-screen h1 {
+            color: #d81b60;
+            font-size: 3.5rem;
+            padding: 20px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Màn hình kết thúc (Trùm cuối) -->
+    <div id="final-screen">
+        <h1>NHÌN CÁI GÌ MÀ NHÌN, HẾT RỒI CÒN ĐÂU</h1>
+    </div>
+
+    <div id="start-screen">
+        <button id="start-btn">BẤT NGỜ CHƯA!!!!!!!!</button>
+    </div>
+
+    <div id="instruction">LẮC ĐIỆN THOẠI ĐÊ<br><small>(bất ngờ hè)</small></div>
+
+    <div class="candles-container" id="candles">
+        <div class="candle-wrapper" id="num-2">
+            <div class="flame"></div>
+            <img src="D:\Downloads\image-removebg-preview (5).png" alt="2" class="candle-img">
+        </div>
+        
+        <div class="candle-wrapper zero" id="num-0-1">
+            <div class="flame"></div>
+            <img src="D:\Downloads\image-removebg-preview (4).png" alt="0" class="candle-img">
+        </div>
+        
+        <div class="candle-wrapper zero" id="num-0-2">
+            <div class="flame"></div>
+            <img src="D:\Downloads\image-removebg-preview (41).png" alt="0" class="candle-img">
+        </div>
+        
+        <div class="candle-wrapper" id="num-3">
+            <div class="flame"></div>
+            <img src="D:\Downloads\image-removebg-preview (3).png" alt="3" class="candle-img">
+        </div>
+    </div>
+
+    <!-- Nút xuất hiện khi hết nhạc -->
+    <button id="next-btn">Ấn tiếp đi 👉</button>
+
+    <audio id="birthday-song" src="D:\Downloads\Video Project 2.m4a" preload="auto"></audio>
+
+    <!-- THẺ CANVAS PHÁO HOA ĐÃ ĐƯỢC ĐẶT ĐÚNG VỊ TRÍ Ở ĐÂY -->
+    <canvas id="fireworks"></canvas>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const startScreen = document.getElementById('start-screen');
+        const instruction = document.getElementById('instruction');
+        const candlesContainer = document.getElementById('candles');
+        const song = document.getElementById('birthday-song');
+        
+        const nextBtn = document.getElementById('next-btn');
+        const finalScreen = document.getElementById('final-screen');
+        
+        let hasShaken = false;
+        let draggedZerosCount = 0; 
+
+        startBtn.addEventListener('click', async () => {
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                try {
+                    const permissionState = await DeviceMotionEvent.requestPermission();
+                    if (permissionState === 'granted') {
+                        window.addEventListener('devicemotion', handleShake);
+                    } else {
+                        alert('Bạn cần cấp quyền để trải nghiệm hiệu ứng nhé!');
+                    }
+                } catch (error) {
+                    console.error("Lỗi xin quyền:", error);
+                }
+            } else {
+                window.addEventListener('devicemotion', handleShake);
+            }
+
+            song.play().then(() => { song.pause(); }).catch(e => console.log(e));
+            
+            startScreen.style.display = 'none';
+            candlesContainer.style.opacity = '1';
+            instruction.style.display = 'block';
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                if (hasShaken) return;
+                if (startScreen.style.display === 'none') {
+                    hasShaken = true;
+                    triggerMagic();
+                }
+            }
+        });
+
+        function handleShake(event) {
+            if (hasShaken) return;
+            const acc = event.acceleration || event.accelerationIncludingGravity;
+            if (!acc) return;
+            const totalAcceleration = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
+
+            if (totalAcceleration > 20) {
+                hasShaken = true;
+                triggerMagic();
+            }
+        }
+
+        function triggerMagic() {
+            instruction.innerHTML = "NẾN TẮT THÌ PHẢI DỌN. DỌN ĐI!";
+            
+            const zeros = document.querySelectorAll('.zero');
+            zeros.forEach(zero => {
+                zero.classList.add('extinguished');
+            });
+        }
+
+        const zerosElements = document.querySelectorAll('.zero');
+        
+        zerosElements.forEach(zero => {
+            let isDragging = false;
+            let startX, startY;
+
+            zero.addEventListener('pointerdown', (e) => {
+                if (!zero.classList.contains('extinguished')) return;
+                
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                zero.style.transition = 'none'; 
+            });
+
+            window.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                let moveX = e.clientX - startX;
+                let moveY = e.clientY - startY;
+                zero.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+
+            window.addEventListener('pointerup', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                zero.style.transition = 'all 1.2s ease-in-out'; 
+
+                let moveX = e.clientX - startX;
+                let moveY = e.clientY - startY;
+                let distance = Math.sqrt(moveX * moveX + moveY * moveY);
+
+                if (distance > 60) { 
+                    zero.classList.add('fade-out');
+                    zero.style.transform = ''; 
+                    
+                    draggedZerosCount++;
+                    
+                    if (draggedZerosCount === 2) {
+                        instruction.innerHTML = "TUNG HOA! TUNG HOA! TUNG HOA! 🎉";
+                        
+                        const allZeros = document.querySelectorAll('.zero');
+                        allZeros.forEach(z => z.classList.add('collapse-space'));
+                        
+                        candlesContainer.classList.add('magic-done'); 
+                        
+                        setTimeout(() => {
+                            song.play();
+                            startFireworks(); // Bắn pháo hoa
+                        }, 500);
+                    }
+                } else {
+                    zero.style.transform = `translate(0px, 0px)`;
+                }
+            });
+        });
+
+        // --- SỰ KIỆN KHI BÀI HÁT KẾT THÚC ---
+        song.addEventListener('ended', () => {
+            nextBtn.style.display = 'block'; // Hiện nút "ấn tiếp đi"
+        });
+
+        // --- SỰ KIỆN KHI BẤM NÚT "ẤN TIẾP ĐI" ---
+        nextBtn.addEventListener('click', () => {
+            finalScreen.style.display = 'flex'; // Hiện màn hình che toàn bộ trang
+            
+            // Dừng pháo hoa lại cho màn hình gọn gàng
+            clearInterval(fwInterval);
+            ctx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+            particles = [];
+        });
+
+        // --- HỆ THỐNG PHÁO HOA ---
+        const fwCanvas = document.getElementById('fireworks');
+        const ctx = fwCanvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            fwCanvas.width = window.innerWidth;
+            fwCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        function createFirework(x, y) {
+            const colors = ['#ff0043', '#14fc56', '#1e7fff', '#e60cb6', '#f2aa00', '#ffffff'];
+            for(let i = 0; i < 70; i++) { 
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 15, 
+                    vy: (Math.random() - 0.5) * 15 - 2, 
+                    life: 1,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 4 + 1
+                });
+            }
+        }
+
+        function animateFireworks() {
+            requestAnimationFrame(animateFireworks);
+            ctx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.15; 
+                p.life -= 0.015; 
+                if(p.life <= 0) particles.splice(index, 1);
+                
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        let fwInterval;
+        function startFireworks() {
+            animateFireworks();
+            fwInterval = setInterval(() => {
+                createFirework(Math.random() * fwCanvas.width, Math.random() * (fwCanvas.height / 2));
+            }, 600);
+        }
+    </script>
+</body>
+</html>
