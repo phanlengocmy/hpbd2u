@@ -19,11 +19,10 @@
             transform: translateX(-50%);
         }
 
-        /* Bạn có thể tinh chỉnh lại left (%) hoặc top (px) của từng số nếu muốn ngọn lửa dịch chuyển */
-        #num-2 .flame { top: 70px; left: 85%; }
-        #num-0-1 .flame { top: 70px; left: 53%; }
-        #num-0-2 .flame { top: 70px; left: 53%; }
-        #num-3 .flame { top: 70px; left: 67%; }
+        #num-2 .flame { top: 15px; left: 50%; }
+        #num-0-1 .flame { top: 15px; left: 50%; }
+        #num-0-2 .flame { top: 15px; left: 50%; }
+        #num-3 .flame { top: 15px; left: 50%; }
 
         body {
             background-color: #ffb6c1; 
@@ -60,7 +59,7 @@
         #instruction {
             display: none;
             position: absolute; 
-            top: 20%;           
+            top: 15%;           
             width: 90%;
             font-size: 1.5rem;
             color: #d81b60;
@@ -149,10 +148,11 @@
             z-index: 100; 
         }
 
+        /* --- ĐÃ ĐỔI VỊ TRÍ NÚT NẰM NGAY DƯỚI KHU VỰC CHỮ HƯỚNG DẪN --- */
         #next-btn {
             display: none;
             position: absolute;
-            bottom: 15%;
+            top: 25%; /* Đặt ngay phía dưới dòng chữ instruction (top: 15%) */
             z-index: 200;
             background-color: #ff1493;
             animation: pulse 1s infinite;
@@ -204,6 +204,9 @@
 
     <div id="instruction">LẮC ĐIỆN THOẠI ĐÊ<br><small>(bất ngờ hè)</small></div>
 
+    <!-- Nút "Ấn tiếp đi" được đưa lên phía trên, nằm ngay sát dưới khu vực chữ -->
+    <button id="next-btn">Ấn tiếp đi 👉</button>
+
     <div class="candles-container" id="candles">
         <div class="candle-wrapper" id="num-2">
             <div class="flame"></div>
@@ -226,12 +229,9 @@
         </div>
     </div>
 
-    <button id="next-btn">Ấn tiếp đi 👉</button>
-
     <canvas id="fireworks"></canvas>
 
-    <!-- Khai báo thẻ audio trực tiếp trong HTML để trình duyệt di động dễ nhận diện -->
-    <audio id="real-song" src="song.m4a" preload="auto"></audio>
+    <audio id="real-song" preload="auto"></audio>
 
     <script>
         const startBtn = document.getElementById('start-btn');
@@ -247,11 +247,8 @@
         let draggedZerosCount = 0; 
 
         startBtn.addEventListener('click', async () => {
-            // Mở khóa âm thanh bằng cách chạy rồi dừng ngay lập tức khi người dùng click
-            song.play().then(() => {
-                song.pause();
-                song.currentTime = 0;
-            }).catch(e => console.log("Lỗi mở khóa âm thanh:", e));
+            song.src = 'song.m4a';
+            song.load();
 
             startScreen.style.display = 'none';
             candlesContainer.style.opacity = '1';
@@ -350,7 +347,6 @@
                         candlesContainer.classList.add('magic-done'); 
                         
                         setTimeout(() => {
-                            // Phát nhạc từ thẻ audio cố định
                             song.play().catch(e => console.log("Lỗi phát nhạc:", e));
                             startFireworks(); 
 
@@ -425,4 +421,4 @@
         }
     </script>
 </body>
-</html
+</html>
