@@ -241,29 +241,35 @@
         let hasStarted = false;
         let draggedZerosCount = 0; 
 
-        startBtn.addEventListener('click', async () => {
-            // Mở khóa âm thanh an toàn bằng file song.m4a mà không bị lọt tiếng ra ngoài
-            const tempSong = new Audio('song.m4a');
-            tempSong.muted = true;
-            tempSong.play().then(() => {
-                tempSong.pause();
-                tempSong.currentTime = 0;
-            }).catch(e => console.log(e));
+        startBtn.addEventListener('pointerdown', async () => {
+            try {
+                // 1. Mở khóa âm thanh an toàn qua đối tượng Audio ẩn
+                const tempSong = new Audio('song.m4a');
+                tempSong.muted = true;
+                tempSong.play().then(() => {
+                    tempSong.pause();
+                    tempSong.currentTime = 0;
+                }).catch(e => console.log("Lỗi âm thanh mồi:", e));
+            } catch (err) {
+                console.log("Không thể tạo audio:", err);
+            }
             
+            // 2. Ẩn màn hình chờ và hiện nội dung ngay lập tức
             startScreen.style.display = 'none';
             candlesContainer.style.opacity = '1';
             instruction.style.display = 'block';
 
+            // 3. Xin quyền cảm biến lắc cho điện thoại
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                 try {
                     const permissionState = await DeviceMotionEvent.requestPermission();
                     if (permissionState === 'granted') {
                         window.addEventListener('devicemotion', handleShake);
                     } else {
-                        alert('Bạn cần cấp quyền để trải nghiệm hiệu ứng nhé!');
+                        alert('Bạn cần cấp quyền cảm biến để trải nghiệm hiệu ứng lắc nhé!');
                     }
                 } catch (error) {
-                    console.error("Lỗi xin quyền:", error);
+                    console.error("Lỗi xin quyền cảm biến:", error);
                 }
             } else {
                 window.addEventListener('devicemotion', handleShake);
