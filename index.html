@@ -5,11 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chúc mừng Sinh nhật!</title>
     <style>
-        /* Tinh chỉnh ngọn lửa */
-        #num-2 .flame { top: 120px; left: 85%; }
-        #num-0-1 .flame { top: 120px; left: 53%; }
-        #num-0-2 .flame { top: 120px; left: 53%; }
-        #num-3 .flame { top: 120px; left: 67%; }
+        /* --- ĐỊNH VỊ NGỌN LỬA CHUẨN XÁC TRÊN ĐẦU SỐ --- */
+        .flame {
+            width: 18px;
+            height: 32px;
+            background: radial-gradient(ellipse at bottom, #ff9900 10%, #ffff00 40%, transparent 80%);
+            border-radius: 50% 50% 20% 20%;
+            animation: flicker 0.1s infinite alternate;
+            transition: opacity 0.5s;
+            position: absolute;
+            top: 25px; /* Đặt ngọn lửa nằm phía trên đầu ảnh */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            pointer-events: none;
+        }
 
         body {
             background-color: #ffb6c1; 
@@ -69,30 +79,17 @@
             flex-direction: column;
             align-items: center;
             margin: 0 8px; 
-            padding-top: 50px; 
+            padding-top: 20px; 
             transition: all 1.2s ease-in-out; 
-            height: 250px; 
+            height: 220px; 
         }
 
         .candle-img {
-            width: 90px;  
-            height: 160px; 
+            width: 80px;  
+            height: 150px; 
             object-fit: contain; 
             transition: all 1.2s ease-in-out;
             margin-top: auto;
-            pointer-events: none;
-        }
-
-        .flame {
-            width: 20px;
-            height: 35px;
-            background: radial-gradient(ellipse at bottom, #ff9900 10%, #ffff00 40%, transparent 80%);
-            border-radius: 50% 50% 20% 20%;
-            animation: flicker 0.1s infinite alternate;
-            transition: opacity 0.5s;
-            position: absolute;
-            transform: translateX(-50%);
-            z-index: 5;
             pointer-events: none;
         }
 
@@ -179,14 +176,15 @@
             text-transform: uppercase;
         }
 
-        /* Tự động thu nhỏ ảnh khi mở trên màn hình điện thoại nhỏ */
+        /* Tự động thu nhỏ cân đối khi mở trên điện thoại nhỏ */
         @media screen and (max-width: 600px) {
             .candle-img {
-                width: 65px !important;   
-                height: 120px !important; 
+                width: 60px !important;   
+                height: 110px !important; 
             }
             .candle-wrapper {
                 margin: 0 4px !important; 
+                height: 180px;
             }
         }
     </style>
@@ -241,14 +239,20 @@
         let hasStarted = false;
         let draggedZerosCount = 0; 
 
-        // Sử dụng sự kiện click thông thường để đảm bảo tương thích 100% trên mọi thiết bị
+        // Khởi tạo đối tượng nhạc sẵn sàng từ tương tác bấm nút đầu tiên (Tránh bị điện thoại chặn)
+        const song = new Audio('song.m4a');
+
         startBtn.addEventListener('click', async () => {
-            // 1. Chuyển đổi giao diện ngay lập tức không chần chừ
+            // Mở khóa âm thanh trực tiếp trên thiết bị di động
+            song.play().then(() => {
+                song.pause();
+                song.currentTime = 0;
+            }).catch(e => console.log("Mở khóa âm thanh:", e));
+
             startScreen.style.display = 'none';
             candlesContainer.style.opacity = '1';
             instruction.style.display = 'block';
 
-            // 2. Xin quyền cảm biến lắc cho điện thoại
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                 try {
                     const permissionState = await DeviceMotionEvent.requestPermission();
@@ -342,8 +346,7 @@
                         candlesContainer.classList.add('magic-done'); 
                         
                         setTimeout(() => {
-                            // Phát bài hát song.m4a đúng lúc ghép đôi thành công
-                            const song = new Audio('song.m4a'); 
+                            // Phát bài hát song.m4a đã được mở khóa từ trước
                             song.play();
                             startFireworks(); 
 
