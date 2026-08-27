@@ -224,7 +224,7 @@
     <!-- THẺ CANVAS PHÁO HOA ĐÃ ĐƯỢC ĐẶT ĐÚNG VỊ TRÍ Ở ĐÂY -->
     <canvas id="fireworks"></canvas>
 
-    <script>
+<script>
         const startBtn = document.getElementById('start-btn');
         const startScreen = document.getElementById('start-screen');
         const instruction = document.getElementById('instruction');
@@ -234,10 +234,23 @@
         const nextBtn = document.getElementById('next-btn');
         const finalScreen = document.getElementById('final-screen');
         
-        let hasShaken = false;
+        let hasStarted = false; // Đổi tên biến để quản lý rõ ràng hơn
         let draggedZerosCount = 0; 
 
         startBtn.addEventListener('click', async () => {
+            // Mở khóa âm thanh an toàn cho điện thoại mà không làm phát nhạc ra ngoài
+            song.muted = true;
+            song.play().then(() => {
+                song.pause();
+                song.currentTime = 0;
+                song.muted = false;
+            }).catch(e => console.log(e));
+            
+            startScreen.style.display = 'none';
+            candlesContainer.style.opacity = '1';
+            instruction.style.display = 'block';
+
+            // Xin quyền cảm biến lắc
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                 try {
                     const permissionState = await DeviceMotionEvent.requestPermission();
@@ -252,38 +265,34 @@
             } else {
                 window.addEventListener('devicemotion', handleShake);
             }
-
-            song.play().then(() => { song.pause(); }).catch(e => console.log(e));
-            
-            startScreen.style.display = 'none';
-            candlesContainer.style.opacity = '1';
-            instruction.style.display = 'block';
         });
 
+        // Nút Space để test trên Laptop
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
-                if (hasShaken) return;
+                if (hasStarted) return;
                 if (startScreen.style.display === 'none') {
-                    hasShaken = true;
+                    hasStarted = true;
                     triggerMagic();
                 }
             }
         });
 
         function handleShake(event) {
-            if (hasShaken) return;
+            if (hasStarted) return;
             const acc = event.acceleration || event.accelerationIncludingGravity;
             if (!acc) return;
             const totalAcceleration = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
 
             if (totalAcceleration > 20) {
-                hasShaken = true;
+                hasStarted = true;
                 triggerMagic();
             }
         }
 
+        // Bước 1: Lắc xong -> tắt nến, yêu cầu kéo số 0
         function triggerMagic() {
-            instruction.innerHTML = "NẾN TẮT THÌ PHẢI DỌN. DỌN ĐI!";
+            instruction.innerHTML = "Nến tắt thì phải dọn. Dọn đi!";
             
             const zeros = document.querySelectorAll('.zero');
             zeros.forEach(zero => {
@@ -291,6 +300,7 @@
             });
         }
 
+        // --- TÍNH NĂNG KÉO THẢ CHO 2 SỐ 0 ---
         const zerosElements = document.querySelectorAll('.zero');
         
         zerosElements.forEach(zero => {
@@ -328,6 +338,7 @@
                     
                     draggedZerosCount++;
                     
+                    // KHI VỨT ĐỦ 2 SỐ 0 -> GHÉP SỐ 23, BẬT NHẠC VÀ PHÁO HOA
                     if (draggedZerosCount === 2) {
                         instruction.innerHTML = "TUNG HOA! TUNG HOA! TUNG HOA! 🎉";
                         
@@ -337,8 +348,8 @@
                         candlesContainer.classList.add('magic-done'); 
                         
                         setTimeout(() => {
-                            song.play();
-                            startFireworks(); // Bắn pháo hoa
+                            song.play(); // ĐÚNG LÚC NÀY NHẠC MỚI BẮT ĐẦU CHẠY THẬT SỰ
+                            startFireworks(); 
                         }, 500);
                     }
                 } else {
@@ -347,16 +358,13 @@
             });
         });
 
-        // --- SỰ KIỆN KHI BÀI HÁT KẾT THÚC ---
+        // --- NÚT "ẤN TIẾP ĐI" CHỈ HIỆN KHI BÀI HÁT CHẠY XONG TỪ ĐẦU ĐẾN CUỐI ---
         song.addEventListener('ended', () => {
-            nextBtn.style.display = 'block'; // Hiện nút "ấn tiếp đi"
+            nextBtn.style.display = 'block'; 
         });
 
-        // --- SỰ KIỆN KHI BẤM NÚT "ẤN TIẾP ĐI" ---
         nextBtn.addEventListener('click', () => {
-            finalScreen.style.display = 'flex'; // Hiện màn hình che toàn bộ trang
-            
-            // Dừng pháo hoa lại cho màn hình gọn gàng
+            finalScreen.style.display = 'flex'; 
             clearInterval(fwInterval);
             ctx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
             particles = [];
