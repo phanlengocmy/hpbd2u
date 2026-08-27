@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chúc mừng Sinh nhật!</title>
     <style>
-        /* Tinh chỉnh ngọn lửa của bạn */
+        /* Tinh chỉnh ngọn lửa */
         #num-2 .flame { top: 120px; left: 85%; }
         #num-0-1 .flame { top: 120px; left: 53%; }
         #num-0-2 .flame { top: 120px; left: 53%; }
@@ -148,9 +148,8 @@
             z-index: 100; 
         }
 
-        /* --- CSS CHO NÚT "ẤN TIẾP ĐI" VÀ MÀN HÌNH KẾT THÚC --- */
         #next-btn {
-            display: none; /* Ẩn cho đến khi hết nhạc */
+            display: none;
             position: absolute;
             bottom: 15%;
             z-index: 200;
@@ -159,14 +158,14 @@
         }
 
         #final-screen {
-            display: none; /* Ẩn màn hình cuối */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #ffb6c1; /* Nền hồng che toàn bộ */
-            z-index: 9999; /* Đè lên tất cả mọi thứ */
+            background-color: #ffb6c1;
+            z-index: 9999;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -179,21 +178,21 @@
             padding: 20px;
             text-transform: uppercase;
         }
-/* Tự động thu nhỏ ảnh khi mở trên màn hình điện thoại nhỏ */
+
+        /* Tự động thu nhỏ ảnh khi mở trên màn hình điện thoại nhỏ */
         @media screen and (max-width: 600px) {
             .candle-img {
-                width: 65px !important;   /* Thu nhỏ chiều rộng ảnh xuống cho vừa vặn */
-                height: 120px !important; /* Thu nhỏ chiều cao ảnh tương ứng */
+                width: 65px !important;   
+                height: 120px !important; 
             }
             .candle-wrapper {
-                margin: 0 4px !important; /* Thu hẹp khoảng cách lề giữa các số */
+                margin: 0 4px !important; 
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Màn hình kết thúc (Trùm cuối) -->
     <div id="final-screen">
         <h1>NHÌN CÁI GÌ MÀ NHÌN, HẾT RỒI CÒN ĐÂU</h1>
     </div>
@@ -226,40 +225,35 @@
         </div>
     </div>
 
-    <!-- Nút xuất hiện khi hết nhạc -->
     <button id="next-btn">Ấn tiếp đi 👉</button>
 
-
-    <!-- THẺ CANVAS PHÁO HOA ĐÃ ĐƯỢC ĐẶT ĐÚNG VỊ TRÍ Ở ĐÂY -->
     <canvas id="fireworks"></canvas>
 
-<script>
+    <script>
         const startBtn = document.getElementById('start-btn');
         const startScreen = document.getElementById('start-screen');
         const instruction = document.getElementById('instruction');
         const candlesContainer = document.getElementById('candles');
-        const song = document.getElementById('birthday-song');
         
         const nextBtn = document.getElementById('next-btn');
         const finalScreen = document.getElementById('final-screen');
         
-        let hasStarted = false; // Đổi tên biến để quản lý rõ ràng hơn
+        let hasStarted = false;
         let draggedZerosCount = 0; 
 
         startBtn.addEventListener('click', async () => {
-            // Mở khóa âm thanh an toàn cho điện thoại mà không làm phát nhạc ra ngoài
-            song.muted = true;
-            song.play().then(() => {
-                song.pause();
-                song.currentTime = 0;
-                song.muted = false;
+            // Mở khóa âm thanh an toàn bằng file song.m4a mà không bị lọt tiếng ra ngoài
+            const tempSong = new Audio('song.m4a');
+            tempSong.muted = true;
+            tempSong.play().then(() => {
+                tempSong.pause();
+                tempSong.currentTime = 0;
             }).catch(e => console.log(e));
             
             startScreen.style.display = 'none';
             candlesContainer.style.opacity = '1';
             instruction.style.display = 'block';
 
-            // Xin quyền cảm biến lắc
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                 try {
                     const permissionState = await DeviceMotionEvent.requestPermission();
@@ -276,7 +270,6 @@
             }
         });
 
-        // Nút Space để test trên Laptop
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 if (hasStarted) return;
@@ -299,7 +292,6 @@
             }
         }
 
-        // Bước 1: Lắc xong -> tắt nến, yêu cầu kéo số 0
         function triggerMagic() {
             instruction.innerHTML = "Nến tắt thì phải dọn. Dọn đi!";
             
@@ -309,7 +301,6 @@
             });
         }
 
-        // --- TÍNH NĂNG KÉO THẢ CHO 2 SỐ 0 ---
         const zerosElements = document.querySelectorAll('.zero');
         
         zerosElements.forEach(zero => {
@@ -347,7 +338,6 @@
                     
                     draggedZerosCount++;
                     
-                    // KHI VỨT ĐỦ 2 SỐ 0 -> GHÉP SỐ 23, BẬT NHẠC VÀ PHÁO HOA
                     if (draggedZerosCount === 2) {
                         instruction.innerHTML = "TUNG HOA! TUNG HOA! TUNG HOA! 🎉";
                         
@@ -357,27 +347,20 @@
                         candlesContainer.classList.add('magic-done'); 
                         
                         setTimeout(() => {
-                            // TẠO VÀ PHÁT NHẠC NGAY TẠI ĐÂY (Đảm bảo không bao giờ bị lọt âm thanh lúc đầu)
-                            const song = new Audio('nhac.m4a'); 
+                            // Phát bài hát song.m4a đúng lúc ghép đôi thành công
+                            const song = new Audio('song.m4a'); 
                             song.play();
                             startFireworks(); 
 
-                            // Lắng nghe sự kiện kết thúc bài hát để hiện nút "Ấn tiếp đi"
                             song.addEventListener('ended', () => {
                                 nextBtn.style.display = 'block'; 
                             });
                         }, 500);
                     }
-                    }
                 } else {
                     zero.style.transform = `translate(0px, 0px)`;
                 }
             });
-        });
-
-        // --- NÚT "ẤN TIẾP ĐI" CHỈ HIỆN KHI BÀI HÁT CHẠY XONG TỪ ĐẦU ĐẾN CUỐI ---
-        song.addEventListener('ended', () => {
-            nextBtn.style.display = 'block'; 
         });
 
         nextBtn.addEventListener('click', () => {
